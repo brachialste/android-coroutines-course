@@ -1,11 +1,13 @@
 package com.techyourchance.coroutines.exercises.exercise1
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -14,8 +16,14 @@ import com.techyourchance.coroutines.R
 import com.techyourchance.coroutines.common.BaseFragment
 import com.techyourchance.coroutines.common.ThreadInfoLogger
 import com.techyourchance.coroutines.home.ScreenReachableFromHome
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Exercise1Fragment : BaseFragment() {
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
 
     override val screenTitle get() = ScreenReachableFromHome.EXERCISE_1.description
 
@@ -46,24 +54,35 @@ class Exercise1Fragment : BaseFragment() {
         btnGetReputation = view.findViewById(R.id.btn_get_reputation)
         btnGetReputation.setOnClickListener {
             logThreadInfo("button callback")
-            btnGetReputation.isEnabled = false
-            getReputationForUser(edtUserId.text.toString())
-            btnGetReputation.isEnabled = true
+            it.hideKeyboard()
+
+            coroutineScope.launch {
+                btnGetReputation.isEnabled = false
+                getReputationForUser(edtUserId.text.toString())
+                btnGetReputation.isEnabled = true
+            }
         }
 
         return view
     }
 
-    private fun getReputationForUser(userId: String) {
+    private suspend fun getReputationForUser(userId: String) {
         logThreadInfo("getReputationForUser()")
 
-        val reputation = getReputationEndpoint.getReputation(userId)
+        val reputation = withContext(Dispatchers.Default) {
+            getReputationEndpoint.getReputation(userId)
+        }
 
         Toast.makeText(requireContext(), "reputation: $reputation", Toast.LENGTH_SHORT).show()
     }
 
     private fun logThreadInfo(message: String) {
         ThreadInfoLogger.logThreadInfo(message)
+    }
+
+    fun View.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
     companion object {

@@ -58,6 +58,8 @@ class ActivityCompositionRoot(
 
     val getReputationEndpoint get() = GetReputationEndpoint()
 
+    val getReputationUseCase get() = com.techyourchance.coroutines.exercises.exercise5.GetReputationUseCase(getReputationEndpoint)
+
     val factorialUseCase get() = FactorialUseCase()
 
     val benchmarkUseCase get() = BenchmarkUseCase()
@@ -70,7 +72,7 @@ class ActivityCompositionRoot(
 
     val exercise6SolutionBenchmarkUseCase get() = Exercise6SolutionBenchmarkUseCase(postBenchmarkResultsEndpoint)
 
-    val getReputationUseCase get() = GetReputationUseCase(getReputationEndpoint)
+    //val getReputationUseCase get() = GetReputationUseCase(getReputationEndpoint)
 
     val makeCustomerPremiumUseCase get() = MakeCustomerPremiumUseCase(premiumCustomersEndpoint, customersDao)
 

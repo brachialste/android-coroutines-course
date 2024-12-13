@@ -44,6 +44,13 @@ class MyViewModel: ViewModel() {
         viewModelScope.coroutineContext.cancelChildren()
     }
 
+    // handled by the view model coroutines framework
+//    override fun onCleared() {
+//        super.onCleared()
+//        viewModelScope.cancel()
+//        // viewModelScope.coroutineContext.cancelChildren() // will also work
+//    }
+
     private fun logThreadInfo(message: String) {
         ThreadInfoLogger.logThreadInfo(message)
     }
